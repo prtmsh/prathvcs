@@ -10,7 +10,7 @@ class Checkout:
         self.commit_id = commit_id
 
     def checkout_commit(self):
-        """Checks out a specific commit."""
+        """Checks out a specific commit, replacing the working directory with the commit's state."""
         if not os.path.exists(self.repo.repo_path):
             print("Not a prathvcs repository. Run 'prathvcs init' first.")
             return
@@ -21,10 +21,20 @@ class Checkout:
         if self.commit_id not in commit_ids:
             print(f"Commit ID '{self.commit_id}' does not exist.")
             return
+
+        # Get the list of tracked files
+        tracked_files = index['tracked_files']
+
+        # Remove tracked files from the working directory
+        for filename in tracked_files:
+            if os.path.exists(filename):
+                os.remove(filename)
+
         # Restore files from the commit
         commit_path = os.path.join(self.repo.commits_dir, self.commit_id)
         for filename in os.listdir(commit_path):
             src_file = os.path.join(commit_path, filename)
             dst_file = os.path.join('.', filename)
             shutil.copy2(src_file, dst_file)
+
         print(f"Checked out commit {self.commit_id}.")
