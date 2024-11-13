@@ -10,6 +10,9 @@ class Status:
 
     def show_status(self):
         """Displays the status of the repository."""
+        if not os.path.exists(self.repo.repo_path):
+            print("Not a prathvcs repository. Run 'prathvcs init' first.")
+            return
         with open(self.repo.index_file, 'r') as f:
             index = json.load(f)
 
@@ -32,20 +35,30 @@ class Status:
                     if filename not in staged_files:
                         modified_files.append(filename)
             else:
-                print("Warning: Tracked file '{}' has been deleted.".format(filename))
+                print(f"Warning: Tracked file '{filename}' has been deleted.")
 
         # Identify untracked files
         for filename in os.listdir('.'):
             if filename not in tracked_files and filename != '.prathvcs':
-                untracked_files.append(filename)
+                if os.path.isfile(filename):
+                    untracked_files.append(filename)
 
         # Display status
         print("Staged files:")
-        for file in staged_files:
-            print("  {}".format(file))
+        if staged_files:
+            for file in staged_files:
+                print(f"  {file}")
+        else:
+            print("  (no files staged)")
         print("\nModified files:")
-        for file in modified_files:
-            print("  {}".format(file))
+        if modified_files:
+            for file in modified_files:
+                print(f"  {file}")
+        else:
+            print("  (no modified files)")
         print("\nUntracked files:")
-        for file in untracked_files:
-            print("  {}".format(file))
+        if untracked_files:
+            for file in untracked_files:
+                print(f"  {file}")
+        else:
+            print("  (no untracked files)")
