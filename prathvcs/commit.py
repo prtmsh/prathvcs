@@ -15,6 +15,12 @@ class Commit:
 
     def make_commit(self):
         """Creates a commit by saving staged files and updating the index."""
+        if not os.path.exists(self.repo.repo_path):
+            print("Not a prathvcs repository. Run 'prathvcs init' first.")
+            return
+        if not os.listdir(self.repo.staging_area):
+            print("No changes added to commit. Use 'prathvcs add <file>' to track files.")
+            return
         commit_path = os.path.join(self.repo.commits_dir, self.commit_id)
         os.makedirs(commit_path)
         # Copy files from staging area to the commit directory
@@ -35,4 +41,4 @@ class Commit:
         # Clear the staging area
         shutil.rmtree(self.repo.staging_area)
         os.makedirs(self.repo.staging_area)
-        print("Committed changes with ID {}.".format(self.commit_id))
+        print(f"[{self.commit_id}] {self.message}")
