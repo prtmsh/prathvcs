@@ -4,6 +4,8 @@ import argparse
 from prathvcs.repository import Repository
 from prathvcs.commit import Commit
 from prathvcs.status import Status
+from prathvcs.log import Log
+from prathvcs.checkout import Checkout
 from prathvcs.help import show_help
 
 def main():
@@ -42,11 +44,11 @@ def main():
         status = Status(repo)
         status.show_status()
     elif args.command == 'log':
-        # Implement log functionality here
-        pass
+        log = Log(repo)
+        log.show_log()
     elif args.command == 'checkout':
-        # Implement checkout functionality here
-        pass
+        checkout = Checkout(repo, args.commit_id)
+        checkout.checkout_commit()
     elif args.command == 'help' or args.command is None:
         show_help()
     else:
